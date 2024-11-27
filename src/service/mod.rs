@@ -16,7 +16,7 @@ fn obtenir_id_stationnement(requête: &str) -> &str {
 pub fn gérer_get_stationnement(requête: &str) -> (String, String) {
     match (
         obtenir_id_stationnement(requête).parse::<i32>(),
-        Client::connect(&base_de_données::get_base_de_données_url(), NoTls),
+        Client::connect(&base_de_données::DATABASE_URL, NoTls),
     ) {
         (Ok(id), Ok(mut client)) => {
             match client.query_one("SELECT * FROM stationnements WHERE id = $1", &[&id]) {
@@ -25,7 +25,7 @@ pub fn gérer_get_stationnement(requête: &str) -> (String, String) {
                         id: row.get(0),
                         adresse: row.get(1),
                         coordonnee: Coordonnee {
-                            longitude: row.get(1),
+                            longitude: row.get(2),
                             latitude: row.get(3),
                         },
                         panneau: row.get(4),
@@ -57,7 +57,7 @@ pub fn gérer_get_stationnement(requête: &str) -> (String, String) {
 }
 
 pub fn gérer_get_tous_stationnements() -> (String, String) {
-    match Client::connect(&base_de_données::get_base_de_données_url(), NoTls) {
+    match Client::connect(&base_de_données::DATABASE_URL, NoTls) {
         Ok(mut client) => {
             let mut liste_stationnements = Vec::new();
 
