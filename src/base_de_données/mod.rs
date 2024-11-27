@@ -1,5 +1,6 @@
 use postgres::{Client, Error as PostgresError, NoTls};
 use std::env;
+use std::fs;
 
 pub const OK_REPONSE: &str = "HTTP/1.1 200 OK\r\nContent-Type: application/json\r\n\r\n";
 pub const PAS_TROUVE: &str = "HTTP/1.1 404 PAS TROUVÉ\r\n\r\n";
@@ -14,18 +15,9 @@ lazy_static! {
 
 pub fn définir_base_données() -> Result<(), PostgresError> {
     let mut client = Client::connect(&DATABASE_URL, NoTls)?;
+    let shema_sql = fs::read_to_string("../SQL/shema.sql").expect("Schéma introuvable");
 
-    client.batch_execute(
-        "CREATE TABLE IF NOT EXISTS stationnements (
-            id SERIAL PRIMARY KEY,
-            adresse TEXT NOT NULL,
-            longitude INT NOT NULL,
-            latitude INT NOT NULL,
-            panneau TEXT NOT NULL,
-            heuresDispoDébut TEXT NOT NULL,
-            heuresDispoFin TEXT NOT NULL,
-            dateDispo TEXT NOT NULL);",
-    )?;
+    client.batch_execute(&shema_sql)?;
 
     Ok(())
 }

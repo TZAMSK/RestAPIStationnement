@@ -1,7 +1,7 @@
 use postgres::{Client, NoTls};
 
 use crate::base_de_données;
-use crate::modèle::{Coordonnee, Stationnement};
+use crate::modèle::{Adresse, Coordonnee, Stationnement};
 
 fn obtenir_id_stationnement(requête: &str) -> &str {
     requête
@@ -23,20 +23,23 @@ pub fn gérer_get_stationnement(requête: &str) -> (String, String) {
                 Ok(row) => {
                     let stationnement = Stationnement {
                         id: row.get(0),
-                        adresse: row.get(1),
-                        coordonnee: Coordonnee {
-                            longitude: row.get(2),
-                            latitude: row.get(3),
+                        adresse: Adresse {
+                            numero_municipal: row.get(1),
+                            rue: row.get(2),
+                            code_postal: row.get(3),
                         },
-                        panneau: row.get(4),
+                        coordonnee: Coordonnee {
+                            longitude: row.get(4),
+                            latitude: row.get(5),
+                        },
+                        panneau: row.get(6),
                         heures_dispo: format!(
                             "{} - {}",
-                            row.get::<usize, String>(5),
-                            row.get::<usize, String>(6)
+                            row.get::<usize, String>(7),
+                            row.get::<usize, String>(8)
                         ),
-                        date_dispo: row.get(7),
+                        date_dispo: row.get(9),
                     };
-
                     (
                         base_de_données::OK_REPONSE.to_string(),
                         serde_json::to_string(&stationnement).unwrap(),
@@ -64,18 +67,22 @@ pub fn gérer_get_tous_stationnements() -> (String, String) {
             for row in client.query("SELECT * FROM stationnements", &[]).unwrap() {
                 liste_stationnements.push(Stationnement {
                     id: row.get(0),
-                    adresse: row.get(1),
-                    coordonnee: Coordonnee {
-                        longitude: row.get(2),
-                        latitude: row.get(3),
+                    adresse: Adresse {
+                        numero_municipal: row.get(1),
+                        rue: row.get(2),
+                        code_postal: row.get(3),
                     },
-                    panneau: row.get(4),
+                    coordonnee: Coordonnee {
+                        longitude: row.get(4),
+                        latitude: row.get(5),
+                    },
+                    panneau: row.get(6),
                     heures_dispo: format!(
                         "{} - {}",
-                        row.get::<usize, String>(5),
-                        row.get::<usize, String>(6)
+                        row.get::<usize, String>(7),
+                        row.get::<usize, String>(8)
                     ),
-                    date_dispo: row.get(7),
+                    date_dispo: row.get(9),
                 });
             }
 

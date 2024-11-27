@@ -1,7 +1,7 @@
 #[derive(Serialize, Deserialize)]
 pub struct Stationnement {
     pub id: Option<i32>,
-    pub adresse: String,
+    pub adresse: Adresse,
     pub coordonnee: Coordonnee,
     pub panneau: String,
     pub heures_dispo: String,
@@ -12,4 +12,11 @@ pub struct Stationnement {
 pub struct Coordonnee {
     pub longitude: i32,
     pub latitude: i32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Adresse {
+    pub numero_municipal: String,
+    pub rue: String,
+    pub code_postal: String,
 }
