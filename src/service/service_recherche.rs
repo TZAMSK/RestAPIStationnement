@@ -8,6 +8,7 @@ pub async fn get_stationnements_avec_adresse(
     path: web::Path<(String, String, String)>,
     pool: web::Data<MySqlPool>,
 ) -> impl Responder {
+    // Récupérer ce qui a été donné dans les paramètres
     let (numero_municipal, rue, code_postal) = path.into_inner();
 
     let rows = sqlx::query!(
@@ -21,8 +22,7 @@ pub async fn get_stationnements_avec_adresse(
             latitude,
             panneau,
             heures_debut,
-            heures_fin,
-            date_dispo
+            heures_fin
         FROM stationnements
         WHERE numero_municipal = ? AND rue = ? AND code_postal = ?
         "#,
@@ -48,10 +48,9 @@ pub async fn get_stationnements_avec_adresse(
                         longitude: row.longitude,
                         latitude: row.latitude,
                     },
-                    panneau: row.panneau,
+                    panneau: row.panneau.into(),
                     heures_debut: row.heures_debut.to_string(),
                     heures_fin: row.heures_fin.to_string(),
-                    date_dispo: row.date_dispo,
                 })
                 .collect();
 

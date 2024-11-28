@@ -5,6 +5,8 @@ use sqlx::MySqlPool;
 
 #[get("/stationnements")]
 pub async fn get_stationnements(pool: web::Data<MySqlPool>) -> impl Responder {
+    // À la place de faire SELECT * FROM
+    // on spécifie les champs parce que la structure de mon modèle
     let rows = sqlx::query!(
         r#"
         SELECT
@@ -16,18 +18,23 @@ pub async fn get_stationnements(pool: web::Data<MySqlPool>) -> impl Responder {
             latitude,
             panneau,
             heures_debut,
-            heures_fin,
-            date_dispo
+            heures_fin
         FROM stationnements
         "#
     )
+    // On s'attend à recevoir toutes les lignes
+    // donc, all
     .fetch_all(pool.get_ref())
     .await;
 
     match rows {
+        // Si réussi à communiquer
         Ok(rows) => {
             let stationnements: Vec<Stationnement> = rows
+                // Avec la règle primère de Rust, into_iter prend possession des données et les
+                // met dans stationnements. donc row n'est plus valide
                 .into_iter()
+                // Transfomer ce qui est dans le vecteurs pour produire un stationnement
                 .map(|row| Stationnement {
                     id: row.id,
                     adresse: Adresse {
@@ -39,15 +46,17 @@ pub async fn get_stationnements(pool: web::Data<MySqlPool>) -> impl Responder {
                         longitude: row.longitude,
                         latitude: row.latitude,
                     },
-                    panneau: row.panneau,
+                    // Convertir String à Vec<u8>
+                    panneau: row.panneau.into(),
                     heures_debut: row.heures_debut.to_string(),
                     heures_fin: row.heures_fin.to_string(),
-                    date_dispo: row.date_dispo,
                 })
+                // Collecter les données transformés vers le vecteurs stationnements
                 .collect();
-
+            // Si réussi, création de la requête
             HttpResponse::Ok().json(stationnements)
         }
+        // Sinon
         Err(e) => {
             eprintln!("Erreur d'aller chercher les stationnements: {}", e);
             HttpResponse::InternalServerError().json(json!( {
@@ -74,16 +83,17 @@ pub async fn get_stationnement(
             latitude,
             panneau,
             heures_debut,
-            heures_fin,
-            date_dispo
+            heures_fin
         FROM stationnements
         WHERE id = ?"#,
         stationnement_id
     )
+    // On s'attend à recevoir une seule ligne
     .fetch_one(pool.get_ref())
     .await;
 
     match row {
+        // Si réussi à communiquer
         Ok(row) => {
             let stationnement = Stationnement {
                 id: row.id,
@@ -96,14 +106,14 @@ pub async fn get_stationnement(
                     longitude: row.longitude,
                     latitude: row.latitude,
                 },
-                panneau: row.panneau,
+                panneau: row.panneau.into(),
                 heures_debut: row.heures_debut.to_string(),
                 heures_fin: row.heures_fin.to_string(),
-                date_dispo: row.date_dispo,
             };
 
             HttpResponse::Ok().json(stationnement)
         }
+        // Sinon
         Err(e) => {
             eprintln!("Erreur d'aller chercher les stationnements: {}", e);
             HttpResponse::InternalServerError().json(json!( {
