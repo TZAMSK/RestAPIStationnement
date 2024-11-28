@@ -46,8 +46,11 @@ async fn main() -> std::io::Result<()> {
             .service(service_affichage::get_stationnement)
             // HTTP:GET TOUS LES STATIONNEMENTS ENTRE L'HEURE DÉTERMINÉE ET L'HEURE FINAL CALULÉE
             // http://localhost:8080/stationnements/{heuresDebut}/{heuresPrevus}
-            //  Exemple:
+            // Exemple: http://localhost:8080/stationnements/08:00/01:00
             .service(service_filtre::get_stationnements_heure)
+            // HTTP:GET TROUVER UN STATIONNEMENT AVEC L'ADRESSE DONNÉ
+            // http://localhost:8080/stationnement/{numero_municipal}/{rue}/{code_postal}
+            // Exemple: http://localhost:8080/stationnements/1001/ajhawd aeas/H4N 0G5
             .service(service_recherche::get_stationnements_avec_adresse)
     })
     // Adresse réseau avec le port 8080
