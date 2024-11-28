@@ -32,8 +32,13 @@ async fn main() -> std::io::Result<()> {
             // http://localhost:8080/stationnements
             .service(service::get_stationnements)
             // HTTP:GET UN STATIONNEMENT
-            // http://localhost:8080/stationnement
+            // http://localhost:8080/stationnements/{id}
+            // Exemple: http://localhost:8080/stationnements/5881cb69-ad54-11ef-9b2b-6c02e03fe7b3
             .service(service::get_stationnement)
+            // HTTP:GET TOUS LES STATIONNEMENTS ENTRE L'HEURE DÉTERMINÉE ET L'HEURE FINAL CALULÉE
+            // http://localhost:8080/stationnements/{heuresDebut}/{heuresPrevus}
+            //  Exemple:
+            .service(service::get_stationnements_heure)
     })
     // Adresse réseau avec le port 8080
     .bind("localhost:8080")?
