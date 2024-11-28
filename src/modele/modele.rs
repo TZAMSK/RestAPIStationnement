@@ -5,10 +5,9 @@ pub struct Stationnement {
     pub id: String,
     pub adresse: Adresse,
     pub coordonnee: Coordonnee,
-    pub panneau: String,
+    pub panneau: Vec<u8>,
     pub heures_debut: String,
     pub heures_fin: String,
-    pub date_dispo: String,
 }
 
 #[derive(Serialize, Deserialize)]
