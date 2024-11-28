@@ -1,8 +1,17 @@
-mod model;
-mod service;
+//mod model;
+mod service {
+    pub mod service_affichage;
+    pub mod service_filtre;
+    pub mod service_recherche;
+}
+
+mod modele {
+    pub mod modele;
+}
 
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
+use service::{service_affichage, service_filtre, service_recherche};
 use sqlx::mysql::MySqlPoolOptions;
 use std::env;
 
@@ -30,16 +39,16 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(pool.clone()))
             // HTTP:GET TOUS LES STATIONNEMENTS
             // http://localhost:8080/stationnements
-            .service(service::get_stationnements)
+            .service(service_affichage::get_stationnements)
             // HTTP:GET UN STATIONNEMENT
             // http://localhost:8080/stationnements/{id}
             // Exemple: http://localhost:8080/stationnements/5881cb69-ad54-11ef-9b2b-6c02e03fe7b3
-            .service(service::get_stationnement)
+            .service(service_affichage::get_stationnement)
             // HTTP:GET TOUS LES STATIONNEMENTS ENTRE L'HEURE DÉTERMINÉE ET L'HEURE FINAL CALULÉE
             // http://localhost:8080/stationnements/{heuresDebut}/{heuresPrevus}
             //  Exemple:
-            .service(service::get_stationnements_heure)
-            .service(service::get_stationnements_avec_adresse)
+            .service(service_filtre::get_stationnements_heure)
+            .service(service_recherche::get_stationnements_avec_adresse)
     })
     // Adresse réseau avec le port 8080
     .bind("localhost:8080")?
