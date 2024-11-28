@@ -29,6 +29,7 @@ pub async fn get_stationnements_heure(
     let temps_final_str = temps_final.format("%H:%M").to_string();
 
     let rows = sqlx::query!(
+        // Chercher les stationnements discponible avec la plage d'heures donnée
         r#"
         SELECT
             id,
@@ -41,12 +42,10 @@ pub async fn get_stationnements_heure(
             heures_debut,
             heures_fin
         FROM stationnements
-        WHERE heures_debut BETWEEN ? AND ? AND heures_fin BETWEEN ? AND ?;
+        WHERE heures_debut > ? or heures_fin < ?;
         "#,
-        temps_debut_str,
         temps_final_str,
         temps_debut_str,
-        temps_final_str
     )
     .fetch_all(pool.get_ref())
     .await;
