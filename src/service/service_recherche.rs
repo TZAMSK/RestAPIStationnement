@@ -48,7 +48,7 @@ pub async fn get_stationnements_avec_adresse(
                         longitude: row.longitude,
                         latitude: row.latitude,
                     },
-                    panneau: row.panneau.into(),
+                    panneau: row.panneau,
                     heures_debut: row.heures_debut.to_string(),
                     heures_fin: row.heures_fin.to_string(),
                 })

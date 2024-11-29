@@ -5,7 +5,7 @@ pub struct Stationnement {
     pub id: String,
     pub adresse: Adresse,
     pub coordonnee: Coordonnee,
-    pub panneau: Vec<u8>,
+    pub panneau: String,
     pub heures_debut: String,
     pub heures_fin: String,
 }
