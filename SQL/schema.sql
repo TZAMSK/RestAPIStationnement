@@ -4,7 +4,7 @@ CREATE DATABASE stationnementsdb;
 use stationnementsdb;
 
 CREATE TABLE stationnements (
-    id CHAR(36) PRIMARY KEY,                          
+    id INT AUTO_INCREMENT PRIMARY KEY,                          
     numero_municipal VARCHAR(50) NOT NULL,       
     rue VARCHAR(255) NOT NULL,                   
     code_postal VARCHAR(10) NOT NULL,            
