@@ -46,8 +46,7 @@ pub async fn get_stationnements(pool: web::Data<MySqlPool>) -> impl Responder {
                         longitude: row.longitude,
                         latitude: row.latitude,
                     },
-                    // Convertir String à Vec<u8>
-                    panneau: row.panneau.into(),
+                    panneau: row.panneau,
                     heures_debut: row.heures_debut.to_string(),
                     heures_fin: row.heures_fin.to_string(),
                 })
@@ -106,7 +105,7 @@ pub async fn get_stationnement(
                     longitude: row.longitude,
                     latitude: row.latitude,
                 },
-                panneau: row.panneau.into(),
+                panneau: row.panneau,
                 heures_debut: row.heures_debut.to_string(),
                 heures_fin: row.heures_fin.to_string(),
             };

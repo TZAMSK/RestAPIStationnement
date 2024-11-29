@@ -2,6 +2,7 @@
 mod service {
     pub mod service_affichage;
     pub mod service_filtre;
+    pub mod service_image;
     pub mod service_recherche;
 }
 
@@ -9,9 +10,10 @@ mod modele {
     pub mod modele;
 }
 
+use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
-use service::{service_affichage, service_filtre, service_recherche};
+use service::{service_affichage, service_filtre, service_image, service_recherche};
 use sqlx::mysql::MySqlPoolOptions;
 use std::env;
 
@@ -37,6 +39,7 @@ async fn main() -> std::io::Result<()> {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
+            .wrap(Cors::permissive())
             // HTTP:GET TOUS LES STATIONNEMENTS
             // http://localhost:8080/stationnements
             .service(service_affichage::get_stationnements)
@@ -52,6 +55,7 @@ async fn main() -> std::io::Result<()> {
             // http://localhost:8080/stationnement/{numero_municipal}/{rue}/{code_postal}
             // Exemple: http://localhost:8080/stationnements/1001/ajhawd aeas/H4N 0G5
             .service(service_recherche::get_stationnements_avec_adresse)
+            .service(service_image::get_image)
     })
     // Adresse réseau avec le port 8080
     .bind("localhost:8080")?
