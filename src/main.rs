@@ -4,6 +4,7 @@ mod service {
     pub mod service_filtre;
     pub mod service_image;
     pub mod service_recherche;
+    pub mod service_selection;
 }
 
 mod modele {
@@ -13,7 +14,9 @@ mod modele {
 use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
-use service::{service_affichage, service_filtre, service_image, service_recherche};
+use service::{
+    service_affichage, service_filtre, service_image, service_recherche, service_selection,
+};
 use sqlx::mysql::MySqlPoolOptions;
 use std::env;
 
@@ -55,7 +58,19 @@ async fn main() -> std::io::Result<()> {
             // http://localhost:8080/stationnement/{numero_municipal}/{rue}/{code_postal}
             // Exemple: http://localhost:8080/stationnements/1001/ajhawd aeas/H4N 0G5
             .service(service_recherche::get_stationnements_avec_adresse)
+            // HTTP:GET TROUVER IMAGE SPÉCIFIQUE
+            // http://localhost:8080/panneaux_images/{image_nom}
+            // Exemple: http://localhost:8080/panneaux_images/SV-PS_NE-1446.png
             .service(service_image::get_image)
+            // HTTP:GET AFFICHER LES NUMÉROS_MUNICIPAUX UNIQUES
+            // http://localhost:8080/stationnements/numeros_municipaux
+            .service(service_selection::get_numeros_municipaux)
+            // HTTP:GET AFFICHER LES RUES UNIQUES
+            // http://localhost:8080/stationnements/rues
+            .service(service_selection::get_rues)
+            // HTTP:GET AFFICHER LES CODES POSTALS UNIQUES
+            // http://localhost:8080/stationnements/codes_postals
+            .service(service_selection::get_codes_postals)
     })
     // Adresse réseau avec le port 8080
     .bind("localhost:8080")?
