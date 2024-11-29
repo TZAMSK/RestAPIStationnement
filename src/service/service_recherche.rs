@@ -38,7 +38,7 @@ pub async fn get_stationnements_avec_adresse(
             let stationnements: Vec<Stationnement> = rows
                 .into_iter()
                 .map(|row| Stationnement {
-                    id: row.id,
+                    id: row.id.to_string(),
                     adresse: Adresse {
                         numero_municipal: row.numero_municipal,
                         rue: row.rue,

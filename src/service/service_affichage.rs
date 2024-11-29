@@ -36,7 +36,7 @@ pub async fn get_stationnements(pool: web::Data<MySqlPool>) -> impl Responder {
                 .into_iter()
                 // Transfomer ce qui est dans le vecteurs pour produire un stationnement
                 .map(|row| Stationnement {
-                    id: row.id,
+                    id: row.id.to_string(),
                     adresse: Adresse {
                         numero_municipal: row.numero_municipal,
                         rue: row.rue,
@@ -67,7 +67,7 @@ pub async fn get_stationnements(pool: web::Data<MySqlPool>) -> impl Responder {
 
 #[get("/stationnements/{id}")]
 pub async fn get_stationnement(
-    path: web::Path<uuid::Uuid>,
+    path: web::Path<String>,
     pool: web::Data<MySqlPool>,
 ) -> impl Responder {
     let stationnement_id = path.into_inner().to_string();
@@ -95,7 +95,7 @@ pub async fn get_stationnement(
         // Si réussi à communiquer
         Ok(row) => {
             let stationnement = Stationnement {
-                id: row.id,
+                id: row.id.to_string(),
                 adresse: Adresse {
                     numero_municipal: row.numero_municipal,
                     rue: row.rue,
