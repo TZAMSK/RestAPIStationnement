@@ -85,8 +85,8 @@ pub async fn get_stationnements_rayon(
                                 code_postal: row.code_postal,
                             },
                             coordonnee: Coordonnee {
-                                longitude: longitude.into(),
-                                latitude: latitude.into(),
+                                longitude: row.longitude,
+                                latitude: row.latitude,
                             },
                             panneau: row.panneau,
                             heures_debut: row.heures_debut.to_string(),
