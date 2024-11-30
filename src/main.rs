@@ -65,14 +65,19 @@ async fn main() -> std::io::Result<()> {
             // Exemple: http://localhost:8080/panneaux_images/SV-PS_NE-1446.png
             .service(service_image::get_image)
             // HTTP:GET AFFICHER LES NUMÉROS_MUNICIPAUX UNIQUES
-            // http://localhost:8080/stationnements/numeros_municipaux
+            // http://localhost:8080/numeros_municipaux
             .service(service_selection::get_numeros_municipaux)
             // HTTP:GET AFFICHER LES RUES UNIQUES
-            // http://localhost:8080/stationnements/rues
+            // http://localhost:8080/rues/{numero_municipal}
+            // Exemple: http://localhost:8080/rues/1001
             .service(service_selection::get_rues)
             // HTTP:GET AFFICHER LES CODES POSTALS UNIQUES
-            // http://localhost:8080/stationnements/codes_postals
+            // http://localhost:8080/codes_postals/{numero_municipal}/{rue}
+            // Exemple: http://localhost:8080/codes_postals/1001/Rue Beaubien
             .service(service_selection::get_codes_postals)
+            // HTTP:GET TROUVER LES SATIONNEMENTS À L'INTÉRIEUR DU CERCLE AVEC UN RAYON
+            // http://localhost:8080/stationnements/rayon/{position_longitude}/{position_latitude}/{rayon_metre}
+            // Exemple: http://localhost:8080/stationnements/rayon/-73.583856/45.557873/150
             .service(service_rayon::get_stationnements_rayon)
     })
     // Adresse réseau avec le port 8080
