@@ -3,6 +3,7 @@ mod service {
     pub mod service_affichage;
     pub mod service_filtre;
     pub mod service_image;
+    pub mod service_rayon;
     pub mod service_recherche;
     pub mod service_selection;
 }
@@ -15,7 +16,8 @@ use actix_cors::Cors;
 use actix_web::{web, App, HttpServer};
 use dotenv::dotenv;
 use service::{
-    service_affichage, service_filtre, service_image, service_recherche, service_selection,
+    service_affichage, service_filtre, service_image, service_rayon, service_recherche,
+    service_selection,
 };
 use sqlx::mysql::MySqlPoolOptions;
 use std::env;
@@ -71,6 +73,7 @@ async fn main() -> std::io::Result<()> {
             // HTTP:GET AFFICHER LES CODES POSTALS UNIQUES
             // http://localhost:8080/stationnements/codes_postals
             .service(service_selection::get_codes_postals)
+            .service(service_rayon::get_stationnements_rayon)
     })
     // Adresse réseau avec le port 8080
     .bind("localhost:8080")?
