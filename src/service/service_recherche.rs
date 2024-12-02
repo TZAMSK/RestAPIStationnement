@@ -11,7 +11,7 @@ pub async fn get_stationnements_avec_adresse(
     // Récupérer ce qui a été donné dans les paramètres
     let (numero_municipal, rue, code_postal) = path.into_inner();
 
-    let rows = sqlx::query!(
+    let row = sqlx::query!(
         r#"
         SELECT
             id,
@@ -30,31 +30,28 @@ pub async fn get_stationnements_avec_adresse(
         rue,
         code_postal
     )
-    .fetch_all(pool.get_ref())
+    .fetch_one(pool.get_ref())
     .await;
 
-    match rows {
-        Ok(rows) => {
-            let stationnements: Vec<Stationnement> = rows
-                .into_iter()
-                .map(|row| Stationnement {
-                    id: row.id.to_string(),
-                    adresse: Adresse {
-                        numero_municipal: row.numero_municipal,
-                        rue: row.rue,
-                        code_postal: row.code_postal,
-                    },
-                    coordonnee: Coordonnee {
-                        longitude: row.longitude,
-                        latitude: row.latitude,
-                    },
-                    panneau: row.panneau,
-                    heures_debut: row.heures_debut.to_string(),
-                    heures_fin: row.heures_fin.to_string(),
-                })
-                .collect();
+    match row {
+        Ok(row) => {
+            let stationnement = Stationnement {
+                id: row.id.to_string(),
+                adresse: Adresse {
+                    numero_municipal: row.numero_municipal,
+                    rue: row.rue,
+                    code_postal: row.code_postal,
+                },
+                coordonnee: Coordonnee {
+                    longitude: row.longitude,
+                    latitude: row.latitude,
+                },
+                panneau: row.panneau,
+                heures_debut: row.heures_debut.to_string(),
+                heures_fin: row.heures_fin.to_string(),
+            };
 
-            HttpResponse::Ok().json(stationnements)
+            HttpResponse::Ok().json(stationnement)
         }
         Err(e) => {
             eprintln!("Erreur d'aller chercher les stationnements: {}", e);
