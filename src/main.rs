@@ -81,7 +81,7 @@ async fn main() -> std::io::Result<()> {
             .service(service_rayon::get_stationnements_rayon)
     })
     // Adresse réseau avec le port 8080
-    .bind("localhost:8080")?
+    .bind("10.0.0.136:3000")?
     .run()
     .await
 }
