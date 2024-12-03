@@ -9,6 +9,7 @@ pub async fn get_numeros_municipaux(pool: web::Data<MySqlPool>) -> impl Responde
         SELECT DISTINCT
             numero_municipal
         FROM stationnements
+        ORDER BY numero_municipal ASC
         "#,
     )
     .fetch_all(pool.get_ref())
@@ -41,6 +42,7 @@ pub async fn get_rues(pool: web::Data<MySqlPool>, path: web::Path<String>) -> im
         SELECT DISTINCT
             rue
         FROM stationnements WHERE numero_municipal = ?
+        ORDER BY rue ASC
         "#,
         numero_municipal
     )
@@ -73,6 +75,7 @@ pub async fn get_codes_postals(
         SELECT DISTINCT
             code_postal
         FROM stationnements WHERE numero_municipal = ? AND rue = ?
+        ORDER BY code_postal ASC
         "#,
         numero_municipal,
         rue
