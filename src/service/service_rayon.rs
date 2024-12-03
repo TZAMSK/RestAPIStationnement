@@ -67,16 +67,19 @@ pub async fn get_stationnements_rayon(
                     let latitude = row.latitude as f32;
 
                     // Source: https://math.stackexchange.com/questions/76457/check-if-a-point-is-within-an-ellipse
-                    // Comme dans un cercle, on vérifie si un point est dans un cercle si le
+                    // Source: https://stackoverflow.com/questions/481144/equation-for-testing-if-a-point-is-inside-a-circle
+                    // Comme dans une ellipse, on vérifie si un point est dans un cercle si le
                     // résultat est plus petit que l'aire
                     // Pour un cercle: (x - origin.x)^2 + (x - origin.y)^2 = r^2
                     // Ca doit être plus petie que r^2
                     // Mais pour une ellipse, voire le URL (dois etre plus petit que 1 pour être à
                     // l'intérieur, si = 1, sur la bordure)
-                    let aire = ((longitude - centre_longitude).powi(2) / rayon_longitude.powi(2))
-                        + ((latitude - centre_latitude).powi(2) / rayon_latitude.powi(2));
+                    //
+                    // (x, y) = (longitude, latitude)
+                    let aire = ((centre_longitude - longitude).powi(2))
+                        + ((centre_latitude - latitude).powi(2));
 
-                    if aire < 1.0 {
+                    if aire < rayon_longitude.powi(2) {
                         Some(Stationnement {
                             id: row.id.to_string(),
                             adresse: Adresse {
