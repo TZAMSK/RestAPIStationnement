@@ -40,6 +40,11 @@ pub async fn get_stationnements_rayon(
         coordonne_lon_rayon, coordonne_lat_rayon
     );
 
+    // Distance entre 2 point (taille rayon)
+    let distance_x = (position_longitude as f32 - coordonne_lon_rayon as f32).powi(2);
+    let distance_y = (position_latitude as f32 - coordonne_lat_rayon as f32).powi(2);
+    let taille_rayon = (distance_x + distance_y).sqrt();
+
     let rows = sqlx::query!(
         r#"
         SELECT
@@ -70,6 +75,7 @@ pub async fn get_stationnements_rayon(
                     // Source: https://stackoverflow.com/questions/481144/equation-for-testing-if-a-point-is-inside-a-circle
                     // Comme dans une ellipse, on vérifie si un point est dans un cercle si le
                     // résultat est plus petit que l'aire
+                    // Dans une ellipse si plus petit que 1
                     // Pour un cercle: (x - origin.x)^2 + (x - origin.y)^2 = r^2
                     // Ca doit être plus petie que r^2
                     // Mais pour une ellipse, voire le URL (dois etre plus petit que 1 pour être à
@@ -79,7 +85,7 @@ pub async fn get_stationnements_rayon(
                     let aire = ((centre_longitude - longitude).powi(2))
                         + ((centre_latitude - latitude).powi(2));
 
-                    if aire < rayon_longitude.powi(2) {
+                    if aire < taille_rayon.powi(2) {
                         Some(Stationnement {
                             id: row.id.to_string(),
                             adresse: Adresse {
