@@ -26,7 +26,7 @@ VALUES
     ('3587', 'Bb Rosemont', 'H1X 1L1', -73.577781, 45.556369, '/panneaux_images/SB-PB_QE-0877.png', '13:00:00', '16:00:00'),
     ('3855', 'Bb Rosemont', 'H1X 1L5', -73.576001, 45.558465, '/panneaux_images/SB-PB_QE-0877.png', '13:00:00', '16:00:00'),
     ('2762', 'Rue Beaubien', 'H1Y 1G8', -73.588737, 45.552139, '/panneaux_images/SB-PB_QE-0877.png', '13:00:00', '16:00:00'),
-    ('6823', '21e Avenue', 'H1X 2G9', -73.586010, 45.563621, -73.586010, '/panneaux_images/SB-PB_QE-0877.png', '13:00:00', '16:00:00'),
+    ('6823', '21e Avenue', 'H1X 2G9', -73.586010, 45.563621, '/panneaux_images/SB-PB_QE-0877.png', '13:00:00', '16:00:00'),
 
     ('3603', 'Bb Rosemont', 'H1X 1L1', -73.577736, 45.556400, '/panneaux_images/SB-PC_NE-182.png', '13:00:00', '16:00:00'),
     ('3674', 'Bb Rosemont', 'H1X 1L7', -73.577745, 45.556596, '/panneaux_images/SB-PC_NE-182.png', '13:00:00', '16:00:00'),
