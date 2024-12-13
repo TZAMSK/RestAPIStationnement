@@ -79,6 +79,10 @@ async fn main() -> std::io::Result<()> {
             // http://localhost:8080/stationnements/rayon/{position_longitude}/{position_latitude}/{rayon_metre}
             // Exemple: http://localhost:8080/stationnements/rayon/-73.583856/45.557873/150
             .service(service_rayon::get_stationnements_rayon)
+            // HTTP:GET TROUVER LES RUES DES STATIONNEMENTS À L'INTÉRIEUR DU CERCLE AVEC UN RAYON
+            // http://localhost:8080/stationnements/recherche/rayon/{position_longitude}/{position_latitude}/{rayon_metre}
+            // Exemple: http://localhost:8080/stationnements/recherche/rayon/-73.583856/45.557873/150
+            .service(service_rayon::get_tous_adresses_rayon)
     })
     // Adresse réseau avec le port 8080
     .bind("10.0.0.136:3000")?

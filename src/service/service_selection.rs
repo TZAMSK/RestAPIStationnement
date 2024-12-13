@@ -2,15 +2,21 @@ use actix_web::{get, web, HttpResponse, Responder};
 use serde_json::json;
 use sqlx::MySqlPool;
 
-#[get("/numeros_municipaux")]
-pub async fn get_numeros_municipaux(pool: web::Data<MySqlPool>) -> impl Responder {
+#[get("/numeros_municipaux/{rue}")]
+pub async fn get_numeros_municipaux(
+    pool: web::Data<MySqlPool>,
+    path: web::Path<String>,
+) -> impl Responder {
+    let rue = path.into_inner();
+
     let rows = sqlx::query!(
         r#"
         SELECT DISTINCT
             numero_municipal
-        FROM stationnements
+        FROM stationnements WHERE rue = ?
         ORDER BY numero_municipal ASC
         "#,
+        rue
     )
     .fetch_all(pool.get_ref())
     .await;
@@ -33,18 +39,15 @@ pub async fn get_numeros_municipaux(pool: web::Data<MySqlPool>) -> impl Responde
     }
 }
 
-#[get("/rues/{numero_municipal}")]
-pub async fn get_rues(pool: web::Data<MySqlPool>, path: web::Path<String>) -> impl Responder {
-    let numero_municipal = path.into_inner();
-
+#[get("/rues")]
+pub async fn get_rues(pool: web::Data<MySqlPool>) -> impl Responder {
     let rows = sqlx::query!(
         r#"
         SELECT DISTINCT
             rue
-        FROM stationnements WHERE numero_municipal = ?
+        FROM stationnements
         ORDER BY rue ASC
         "#,
-        numero_municipal
     )
     .fetch_all(pool.get_ref())
     .await;
