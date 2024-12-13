@@ -2,23 +2,18 @@ use crate::modele::modele::{Adresse, Coordonnee, Stationnement};
 use actix_web::{get, web, HttpResponse, Responder};
 use serde_json::json;
 use sqlx::MySqlPool;
+use std::collections::HashSet;
 
 // Taille en mètre:
 // Source: https://support.oxts.com/hc/en-us/articles/115002885125-Level-of-Resolution-of-Longitude-and-Latitude-Measurements
 const DISTANCE_UN_DEGRE_KILOMETRE_LONGITUDE: f32 = 111.319;
 const DISTANCE_UN_DEGRE_KILOMETRE_LATITUDE: f32 = 110.574;
 
-#[get("/stationnements/rayon/{position_longitude}/{position_latitude}/{rayon_metre}")]
-pub async fn get_stationnements_rayon(
-    path: web::Path<(f64, f64, i32)>,
-    pool: web::Data<MySqlPool>,
-) -> impl Responder {
-    let (position_longitude, position_latitude, rayon_metre) = path.into_inner();
-
-    let centre_longitude = position_longitude as f32;
-    let centre_latitude = position_latitude as f32;
-    let rayon = rayon_metre as f32;
-
+fn calculer_coordonnees_rayon(
+    centre_longitude: f32,
+    centre_latitude: f32,
+    rayon: f32,
+) -> (f32, f32, f32) {
     let rayon_km: f32 = rayon / 1000.0;
 
     // Formule: https://stackoverflow.com/questions/66177740/producing-points-in-a-circle-with-specific-radius-from-central-lat-long
@@ -41,9 +36,25 @@ pub async fn get_stationnements_rayon(
     );
 
     // Distance entre 2 point (taille rayon)
-    let distance_x = (position_longitude as f32 - coordonne_lon_rayon as f32).powi(2);
-    let distance_y = (position_latitude as f32 - coordonne_lat_rayon as f32).powi(2);
+    let distance_x = (centre_longitude - coordonne_lon_rayon).powi(2);
+    let distance_y = (centre_latitude - coordonne_lat_rayon).powi(2);
     let taille_rayon = (distance_x + distance_y).sqrt();
+
+    (rayon_latitude, rayon_longitude, taille_rayon)
+}
+
+#[get("/stationnements/rayon/{position_longitude}/{position_latitude}/{rayon_metre}")]
+pub async fn get_stationnements_rayon(
+    path: web::Path<(f64, f64, i32)>,
+    pool: web::Data<MySqlPool>,
+) -> impl Responder {
+    let (position_longitude, position_latitude, rayon_metre) = path.into_inner();
+
+    let centre_longitude = position_longitude as f32;
+    let centre_latitude = position_latitude as f32;
+    let rayon = rayon_metre as f32;
+
+    let (_, _, taille_rayon) = calculer_coordonnees_rayon(centre_longitude, centre_latitude, rayon);
 
     let rows = sqlx::query!(
         r#"
@@ -106,6 +117,64 @@ pub async fn get_stationnements_rayon(
                     }
                 })
                 .collect();
+            return HttpResponse::Ok().json(stationnements);
+        }
+
+        Err(e) => {
+            eprint!("Erreur d'aller chercher les stationnements: {}", e);
+            return HttpResponse::InternalServerError().json(json!({
+                "Erreur": "Erreur de recherche stationnements"
+            }));
+        }
+    }
+}
+
+#[get("/stationnements/recherche/rayon/{position_longitude}/{position_latitude}/{rayon_metre}")]
+pub async fn get_tous_adresses_rayon(
+    path: web::Path<(f64, f64, i32)>,
+    pool: web::Data<MySqlPool>,
+) -> impl Responder {
+    let (position_longitude, position_latitude, rayon_metre) = path.into_inner();
+
+    let centre_longitude = position_longitude as f32;
+    let centre_latitude = position_latitude as f32;
+    let rayon = rayon_metre as f32;
+
+    let (_, _, taille_rayon) = calculer_coordonnees_rayon(centre_longitude, centre_latitude, rayon);
+
+    let rows = sqlx::query!(
+        r#"
+        SELECT DISTINCT
+            rue,
+            latitude,
+            longitude
+        FROM stationnements
+        "#
+    )
+    .fetch_all(pool.get_ref())
+    .await;
+
+    match rows {
+        Ok(rows) => {
+            let stationnements: Vec<String> = rows
+                .into_iter()
+                .filter_map(|row| {
+                    let longitude = row.longitude as f32;
+                    let latitude = row.latitude as f32;
+                    let aire = ((centre_longitude - longitude).powi(2))
+                        + ((centre_latitude - latitude).powi(2));
+
+                    if aire < taille_rayon.powi(2) {
+                        Some(row.rue)
+                    } else {
+                        None
+                    }
+                })
+                // Source: https://users.rust-lang.org/t/better-way-to-find-unique-values/38966
+                .collect::<HashSet<String>>()
+                .into_iter()
+                .collect();
+
             return HttpResponse::Ok().json(stationnements);
         }
 
