@@ -65,11 +65,11 @@ async fn main() -> std::io::Result<()> {
             // Exemple: http://localhost:8080/panneaux_images/SV-PS_NE-1446.png
             .service(service_image::get_image)
             // HTTP:GET AFFICHER LES NUMÉROS_MUNICIPAUX UNIQUES
-            // http://localhost:8080/numeros_municipaux
+            // http://localhost:8080/numeros_municipaux/{rue}
+            // Exemple: //localhost:8080/numeros_municipaux/10e Avenue
             .service(service_selection::get_numeros_municipaux)
             // HTTP:GET AFFICHER LES RUES UNIQUES
-            // http://localhost:8080/rues/{numero_municipal}
-            // Exemple: http://localhost:8080/rues/1001
+            // http://localhost:8080/rues
             .service(service_selection::get_rues)
             // HTTP:GET AFFICHER LES CODES POSTALS UNIQUES
             // http://localhost:8080/codes_postals/{numero_municipal}/{rue}
