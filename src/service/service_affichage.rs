@@ -65,7 +65,7 @@ pub async fn get_stationnements(pool: web::Data<MySqlPool>) -> impl Responder {
     }
 }
 
-#[get("/stationnements/{id}")]
+#[get("/stationnement/{id}")]
 pub async fn get_stationnement(
     path: web::Path<String>,
     pool: web::Data<MySqlPool>,
