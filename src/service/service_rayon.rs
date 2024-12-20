@@ -2,6 +2,7 @@ use crate::modele::modele::{Adresse, Coordonnee, Stationnement};
 use actix_web::{get, web, HttpResponse, Responder};
 use serde_json::json;
 use sqlx::MySqlPool;
+use std::collections::HashSet;
 
 // Taille en mètre:
 // Source: https://support.oxts.com/hc/en-us/articles/115002885125-Level-of-Resolution-of-Longitude-and-Latitude-Measurements
@@ -148,7 +149,6 @@ pub async fn get_tous_adresses_rayon(
             latitude,
             longitude
         FROM stationnements
-        ORDER BY rue ASC
         "#
     )
     .fetch_all(pool.get_ref())
@@ -170,9 +170,15 @@ pub async fn get_tous_adresses_rayon(
                         None
                     }
                 })
-                .collect();
+                // Source: https://users.rust-lang.org/t/better-way-to-find-unique-values/38966
+                .collect::<HashSet<String>>()
+                .into_iter()
+                .collect::<Vec<String>>();
 
-            return HttpResponse::Ok().json(stationnements);
+            let mut ordre_stationnements = stationnements;
+            ordre_stationnements.sort();
+
+            return HttpResponse::Ok().json(ordre_stationnements);
         }
 
         Err(e) => {
