@@ -81,3 +81,64 @@ pub async fn get_stationnements_heure(
         }
     }
 }
+
+#[get("/stationnements/{rue}")]
+pub async fn get_stationnements_rue(
+    path: web::Path<String>,
+    pool: web::Data<MySqlPool>,
+) -> impl Responder {
+    let rue = path.into_inner().to_string();
+
+    let rows = sqlx::query!(
+        r#"
+        SELECT
+            id,
+            numero_municipal,
+            rue,
+            code_postal,
+            longitude,
+            latitude,
+            panneau,
+            heures_debut,
+            heures_fin
+        FROM stationnements
+        WHERE rue = ?"#,
+        rue
+    )
+    // On s'attend à recevoir une seule ligne
+    .fetch_all(pool.get_ref())
+    .await;
+
+    match rows {
+        // Si réussi à communiquer
+        Ok(rows) => {
+            let stationnements: Vec<Stationnement> = rows
+                .into_iter()
+                .map(|row| Stationnement {
+                    id: row.id.to_string(),
+                    adresse: Adresse {
+                        numero_municipal: row.numero_municipal,
+                        rue: row.rue,
+                        code_postal: row.code_postal,
+                    },
+                    coordonnee: Coordonnee {
+                        longitude: row.longitude,
+                        latitude: row.latitude,
+                    },
+                    panneau: row.panneau,
+                    heures_debut: row.heures_debut.to_string(),
+                    heures_fin: row.heures_fin.to_string(),
+                })
+                .collect();
+
+            HttpResponse::Ok().json(stationnements)
+        }
+        // Sinon
+        Err(e) => {
+            eprintln!("Erreur d'aller chercher les stationnements: {}", e);
+            HttpResponse::InternalServerError().json(json!( {
+                "Erreur": "Erreur de recherche stationnements"
+            }))
+        }
+    }
+}
