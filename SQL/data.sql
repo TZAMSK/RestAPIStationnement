@@ -54,7 +54,7 @@ VALUES
     ('6683', '21e Avenue', 'H1X 2G8', -73.583365, 45.562824, '/panneaux_images/SB-US_NE-2312.png', '18:00:00', '00:00:00'),
     ('3626', 'Rue Saint-Zotique', 'H1X 1E6', -73.587382, 45.559318, '/panneaux_images/SB-US_NE-2312.png', '18:00:00', '00:00:00'),
 
-    ('6050', ' BD Saint-Michel', 'H1Y E25', -73.582522, 45.553909, '/panneaux_images/SS-JA_NE-204.png', '07:00:00', '19:00:00'),
+    ('6050', 'BD Saint-Michel', 'H1Y E25', -73.582522, 45.553909, '/panneaux_images/SS-JA_NE-204.png', '07:00:00', '19:00:00'),
     ('6691', '21e Avenue', 'H1X 2G6', -73.583792, 45.562926, '/panneaux_images/SS-JA_NE-204.png', '07:00:00', '19:00:00'),
     ('5187', 'Avenue du Parc', 'H2V 4C7', -73.597456, 45.520412, '/panneaux_images/SS-JA_NE-204.png', '07:00:00', '19:00:00'),
     ('5476', 'Rue Saint-Denis', 'H2X 3K8', -73.594316, 45.529082, '/panneaux_images/SS-JA_NE-204.png', '07:00:00', '19:00:00'),
