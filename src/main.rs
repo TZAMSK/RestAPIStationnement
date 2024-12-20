@@ -56,6 +56,10 @@ async fn main() -> std::io::Result<()> {
             // http://localhost:8080/stationnements/{heuresDebut}/{heuresPrevus}
             // Exemple: http://localhost:8080/stationnements/08:00/01:00
             .service(service_filtre::get_stationnements_heure)
+            // HTTP:GET TOUS LES STATIONNEMENTS AVEC LA RUE FOURNIE
+            // http://localhost:8080/stationnements/{rue}
+            // Exemple: http://localhost:8080/stationnements/9e Avenue
+            .service(service_filtre::get_stationnements_rue)
             // HTTP:GET TROUVER UN STATIONNEMENT AVEC L'ADRESSE DONNÉ
             // http://localhost:8080/stationnement/{numero_municipal}/{rue}/{code_postal}
             // Exemple: http://localhost:8080/stationnements/1001/ajhawd aeas/H4N 0G5
