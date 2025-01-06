@@ -12,7 +12,7 @@ pub async fn get_image(path: web::Path<String>, req: HttpRequest) -> impl Respon
     let image_path = PathBuf::from("./src/panneaux_images").join(image);
 
     if image_path.exists() {
-        // Si le répértoire existe bel et bien
+        // Si le répértoire existe belle et bien
         // Ouvre l'image et prend en objet NamedFile
         // Transforme en une requête HTTP
         NamedFile::open(image_path)
